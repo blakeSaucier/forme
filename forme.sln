@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4291064D-BD89-4396-A341-C125B30216BD}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Forme", "src\Forme\Forme.fsproj", "{9D23F27D-2E68-46B1-9227-E99D05222018}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Forme", "src\Forme\Forme.fsproj", "{9D23F27D-2E68-46B1-9227-E99D05222018}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{45D0F96E-77AB-45FD-9046-247F19A1A087}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9D23F27D-2E68-46B1-9227-E99D05222018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -33,7 +35,13 @@ Global
 		{9D23F27D-2E68-46B1-9227-E99D05222018}.Release|x86.ActiveCfg = Release|Any CPU
 		{9D23F27D-2E68-46B1-9227-E99D05222018}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9D23F27D-2E68-46B1-9227-E99D05222018} = {4291064D-BD89-4396-A341-C125B30216BD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {70323832-0E56-42C8-AC15-C7F8E1D7D98F}
 	EndGlobalSection
 EndGlobal
