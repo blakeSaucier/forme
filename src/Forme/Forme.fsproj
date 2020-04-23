@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Common.fs" />
     <Compile Include="StringValidationBuilder.fs" />
+    <Compile Include="Forme.fs" />
   </ItemGroup>
 
 </Project>

@@ -1,20 +1,53 @@
 ﻿module Forme.Test.StringValidationBuilderTest
 
 open NUnit.Framework
-open Forme
-open FsUnit
+open Forme.StringValidationBuilder
+open Forme.Validator
+open Forme.Common
+
 
 [<Test>]
 let ``Basic string restraint`` () =
-    let beAPhoneNumber s = s = "7789952549"
-
     let nameRestraint = stringRestraint {
         notEmpty
         notLongerThan 50
-        must beAPhoneNumber "Should equal 'James'"
     }
 
-    let res = "James" |> nameRestraint
-    match res with
-    | Ok _ -> Assert.Pass()
-    | Error _ -> failwith "Should have passed validation"
+    match "James" |> nameRestraint with
+    | Ok -> Assert.Pass()
+    | ValidationError e -> failwith "Should have passed validation"
+
+type Person = { FirstName: string; LastName: string; Age: int }
+
+[<Test>]
+let ``Basic model validation`` () =
+
+    let james = {
+        FirstName = "James"
+        LastName = "Saucier"
+        Age = 30 
+    }
+
+    let firstNameContraint = stringRestraint {
+        notEmpty
+        notLongerThan 100
+        must (fun s -> s = "James") "It must equal 'James'"
+    }
+
+    let lastNameContraint = stringRestraint {
+        notEmpty
+        notLongerThan 20
+    }
+
+    let postalCodeContraint = stringRestraint {
+        notLongerThan 6
+    }
+
+    let test = validateFor<Person> {
+        restrain (fun p -> p.FirstName) firstNameContraint
+        restrain (fun p -> p.LastName) lastNameContraint
+    }
+
+    match james |> test with
+    | Ok -> Assert.Pass()
+    | ValidationError e -> failwith "Should have passed validation"
