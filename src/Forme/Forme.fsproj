@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Common.fs" />
+    <Compile Include="IntRestraintBuilder.fs" />
     <Compile Include="StringValidationBuilder.fs" />
     <Compile Include="Forme.fs" />
   </ItemGroup>

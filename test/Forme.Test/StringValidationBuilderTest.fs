@@ -2,9 +2,9 @@
 
 open NUnit.Framework
 open Forme.StringValidationBuilder
+open Forme.IntRestraintBuilder
 open Forme.Validator
 open Forme.Common
-
 
 [<Test>]
 let ``Basic string restraint`` () =
@@ -25,7 +25,7 @@ let ``Basic model validation`` () =
     let james = {
         FirstName = "James"
         LastName = "Saucier"
-        Age = 30 
+        Age = 30
     }
 
     let firstNameContraint = stringRestraint {
@@ -39,13 +39,15 @@ let ``Basic model validation`` () =
         notLongerThan 20
     }
 
-    let postalCodeContraint = stringRestraint {
-        notLongerThan 6
+    let noMinorsOrSeniors = intRestraint {
+        atLeast 19
+        atMost 70
     }
 
     let test = validateFor<Person> {
         restrain (fun p -> p.FirstName) firstNameContraint
         restrain (fun p -> p.LastName) lastNameContraint
+        restrain (fun p -> p.Age) noMinorsOrSeniors
     }
 
     match james |> test with
