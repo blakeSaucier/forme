@@ -6,18 +6,27 @@ type PropertyValidator = { Restraint: obj -> ValidationResult }
 type ModelValidator = { Validations: PropertyValidator list }
 
 module Validator =
+    let private reduceErrors errors =
+        let allErrors = 
+            errors
+            |> List.map (fun e -> e.Message)
+            |> List.fold (+) " "
+        ValidationError { Message = allErrors }
+
+    let private getFailures results =
+        results |> List.choose (fun v ->
+            match v with
+            | ValidationError e -> Some e
+            | Ok -> None)
+
     type ValidatorBuilder<'T>() =
         member __.Yield _ = { Validations = List.Empty }
         member __.Run (modelValidator: ModelValidator) (t:'T) =
             let boxed = box t
             let results = modelValidator.Validations |> List.map (fun r -> (r.Restraint boxed))
-            let result = results |> List.choose (fun v ->
-                match v with
-                | ValidationError e -> Some e
-                | Ok -> None)
-            match result with
+            match getFailures results with
             | [] -> Ok
-            | errs -> ValidationError (errs |> List.fold (+) " ")
+            | errs -> reduceErrors errs
 
         [<CustomOperation "restrain">]
         member __.Restrain  (modelValidator: ModelValidator,

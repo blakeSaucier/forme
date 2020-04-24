@@ -1,9 +1,7 @@
 ﻿namespace Forme
 module Common =
-    type ValidationError = { Message: string }
+    type Error = { Message: string }
 
     type ValidationResult =
-        | ValidationError of string
+        | ValidationError of Error
         | Ok
-
-    type WeakStringValidator = obj -> ValidationResult

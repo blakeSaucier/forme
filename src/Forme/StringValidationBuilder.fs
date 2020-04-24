@@ -17,14 +17,14 @@ type StringValidationBuilder() =
             | _ -> None)
         match failures with
             | [] -> Ok
-            | _ -> ValidationError "Failed"
+            | _ -> ValidationError { Message = "Failed" }
 
     /// String cannot be null or whitespace
     [<CustomOperation "notEmpty">]
     member __.NotEmpty(validators: StringRestraints) =
         let mustNotBeEmpty s =
             match s |> String.IsNullOrWhiteSpace with
-            | true -> ValidationError "Must not be empty"
+            | true -> ValidationError { Message = "Must not be empty" }
             | false -> Ok
         { validators with Restraints = mustNotBeEmpty :: validators.Restraints }
 
@@ -34,7 +34,7 @@ type StringValidationBuilder() =
         let notLongerThanLength length str = 
             match str |> String.length <= length with
             | true -> Ok
-            | false -> ValidationError "must not be longer than %i"
+            | false -> ValidationError { Message = "must not be longer than %i" }
         { validators with Restraints = notLongerThanLength length :: validators.Restraints }
 
     /// Describe a custom string validation
@@ -43,7 +43,7 @@ type StringValidationBuilder() =
         let customRestraint str  =
             match restraint str with
             | true -> Ok
-            | false -> ValidationError message
+            | false -> ValidationError { Message = message }
         { validators with Restraints = customRestraint :: validators.Restraints }
 
 let stringRestraint = StringValidationBuilder()
