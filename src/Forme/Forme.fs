@@ -6,7 +6,14 @@ open Microsoft.FSharp.Quotations.Patterns
 
 type PropGet<'T, 'U> = Expr<'T -> 'U>
 
-type PropertyValidator = { Restraint: obj -> ValidationResult }
+type PropertyValidator = 
+    { Restraint: obj -> ValidationResult
+      FieldName: string }
+
+type PropertyValidated =
+    { Result: ValidationResult
+      FieldName: string }
+
 type ModelValidator = { Validations: PropertyValidator list }
 
 module Validator =
@@ -14,16 +21,16 @@ module Validator =
         let allErrors = 
             errors
             |> List.map (fun e -> e.Message)
-            |> List.fold (+) " "
+            |> String.concat "\n"
         ValidationError { Message = allErrors }
 
     let private getFailures results =
         results |> List.choose (fun v ->
-            match v with
-            | ValidationError e -> Some e
+            match v.Result with
+            | ValidationError e -> Some { Message = sprintf "'%s' Failed Validation: %s" v.FieldName e.Message }
             | Ok -> None)
 
-    let propNameGetter (getter:Expr<'T -> 'U>) =
+    let private propNameGetter (getter:Expr<'T -> 'U>) =
         let rec matchPropName expr =
             match expr with
             | Patterns.PropertyGet(_, p, _) -> p.Name
@@ -31,7 +38,7 @@ module Validator =
             | _ -> failwith "Unsupported Expression"
         matchPropName getter
 
-    let propGetter (getter:Expr<'T -> 'U>) =
+    let private propGetter (getter:Expr<'T -> 'U>) =
         let rec matchPropGet expr =
             match expr with
             | Patterns.PropertyGet(_, p, _) -> (fun (t:'T) -> p.GetValue(t) :?> 'U)
@@ -43,7 +50,9 @@ module Validator =
         member __.Yield _ = { Validations = List.Empty }
         member __.Run (modelValidator: ModelValidator) (t:'T) =
             let boxed = box t
-            let results = modelValidator.Validations |> List.map (fun r -> (r.Restraint boxed))
+            let results = 
+                modelValidator.Validations 
+                |> List.map (fun r -> { Result = (r.Restraint boxed); FieldName = r.FieldName })
             match getFailures results with
             | [] -> Ok
             | errs -> reduceErrors errs
@@ -54,7 +63,8 @@ module Validator =
                             (validation: 'U -> ValidationResult)) =
             let propName = propNameGetter getter
             let typedPropGetter = propGetter getter
-            let newRestraint = fun (value: obj) -> (typedPropGetter >> validation) (value :?> 'T)
-            { Validations = { Restraint = newRestraint } :: modelValidator.Validations }
+            let validationFunction = fun (value: obj) -> (typedPropGetter >> validation) (value :?> 'T)
+            let restraint = { Restraint = validationFunction; FieldName = propName }
+            { Validations = restraint :: modelValidator.Validations }
 
     let validateFor<'T> = ValidatorBuilder<'T>()
