@@ -25,7 +25,7 @@ let ``Basic model validation`` () =
     let james = {
         FirstName = "James"
         LastName = "Saucier"
-        Age = 30
+        Age = 33
     }
 
     let firstNameContraint = stringRestraint {
