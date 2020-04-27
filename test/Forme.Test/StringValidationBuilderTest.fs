@@ -2,9 +2,8 @@
 
 open NUnit.Framework
 open Forme.StringValidationBuilder
-open Forme.IntRestraintBuilder
-open Forme.Validator
 open Forme.Common
+open FsUnit
 
 [<Test>]
 let ``Basic string restraint`` () =
@@ -17,39 +16,22 @@ let ``Basic string restraint`` () =
     | Ok -> Assert.Pass()
     | ValidationError e -> failwith "Should have passed validation"
 
-type Person = { FirstName: string; LastName: string; Age: int }
+[<Test>]
+let ``Basic string validation failure messages`` () =
+    let notEmptyRestraint = stringRestraint { notEmpty }
+
+    match "" |> notEmptyRestraint with
+    | Ok -> failwith "Validation should have failed"
+    | ValidationError e -> e.Message |> should equal "Must not be empty"
 
 [<Test>]
-let ``Basic model validation`` () =
-
-    let james = {
-        FirstName = "James"
-        LastName = "Saucier"
-        Age = 33
-    }
-
-    let firstNameContraint = stringRestraint {
+let ``Multiple error messages should be joined`` () =
+    let bcPostalCode = stringRestraint {
+        notLongerThan 6
         notEmpty
-        notLongerThan 100
-        must (fun s -> s = "James") "It must equal 'James'"
+        must (fun s -> s.StartsWith("V")) "Must start with 'V'"
     }
 
-    let lastNameContraint = stringRestraint {
-        notEmpty
-        notLongerThan 20
-    }
-
-    let noMinorsOrSeniors = intRestraint {
-        atLeast 19
-        atMost 70
-    }
-
-    let test = validateFor<Person> {
-        restrain (fun p -> p.FirstName) firstNameContraint
-        restrain (fun p -> p.LastName) lastNameContraint
-        restrain (fun p -> p.Age) noMinorsOrSeniors
-    }
-
-    match james |> test with
-    | Ok -> Assert.Pass()
-    | ValidationError e -> failwith "Should have passed validation"
+    match "Not a postal code" |> bcPostalCode with
+    | Ok -> failwith "Validation should have failed"
+    | ValidationError e -> e.Message |> should equal "Must start with 'V'; Must not be longer than 6"

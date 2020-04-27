@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="IntValidationBuilderTest.fs" />
     <Compile Include="StringValidationBuilderTest.fs" />
+    <Compile Include="FormeTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -7,7 +7,7 @@ type StringRestraint = string -> ValidationResult
 
 type StringRestraints = { Restraints: StringRestraint list }
 
-type StringValidationBuilder() =
+type StringRestraintBuilder() =
     member __.Yield _ = { Restraints = List.Empty }
     member __.Run(validation: StringRestraints) (str: string) =
         let evaluated = validation.Restraints |> List.map (fun v -> v str)
@@ -17,7 +17,7 @@ type StringValidationBuilder() =
             | _ -> None)
         match failures with
             | [] -> Ok
-            | _ -> ValidationError { Message = "Failed" }
+            | errors -> joinErrorMessages errors
 
     /// String cannot be null or whitespace
     [<CustomOperation "notEmpty">]
@@ -34,7 +34,7 @@ type StringValidationBuilder() =
         let notLongerThanLength length str = 
             match str |> String.length <= length with
             | true -> Ok
-            | false -> ValidationError { Message = "must not be longer than %i" }
+            | false -> ValidationError { Message = sprintf "Must not be longer than %i" length }
         { validators with Restraints = notLongerThanLength length :: validators.Restraints }
 
     /// Describe a custom string validation
@@ -46,4 +46,4 @@ type StringValidationBuilder() =
             | false -> ValidationError { Message = message }
         { validators with Restraints = customRestraint :: validators.Restraints }
 
-let stringRestraint = StringValidationBuilder()
+let stringRestraint = StringRestraintBuilder()

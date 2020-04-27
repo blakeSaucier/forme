@@ -6,13 +6,6 @@ type IntRestraint = int -> ValidationResult
 
 type IntRestraints = { Restraints: IntRestraint list }
 
-let private reduceErrors errors =
-    let allErrors = 
-        errors
-        |> List.map (fun e -> e.Message)
-        |> String.concat "; "
-    ValidationError { Message = allErrors }
-
 type IntRestraintBuilder() =
     member __.Yield _ = { Restraints = List.empty }
     member __.Run (validations: IntRestraints) i =
@@ -23,7 +16,7 @@ type IntRestraintBuilder() =
             | _ -> None)
         match failures with
             | [] -> Ok
-            | errors -> reduceErrors errors
+            | errors -> joinErrorMessages errors
 
     [<CustomOperation "atLeast">]
     member __.AtLeast(validators: IntRestraints, minimum) =
