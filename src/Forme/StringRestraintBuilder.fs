@@ -45,7 +45,6 @@ type StringRestraintBuilder() =
             | true -> Ok
             | false -> ValidationError { Message = sprintf "Must be at least as long as %i" length }
         { validators with Restraints = atLeastAsLong length :: validators.Restraints }
-    
 
     /// The string must have the specified length
     [<CustomOperation "hasLengthOf">]

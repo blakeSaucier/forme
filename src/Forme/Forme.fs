@@ -57,7 +57,7 @@ module Validator =
             | [] -> Ok
             | errs -> reduceErrors errs
 
-        [<CustomOperation "restrain">]
+        [<CustomOperation "enforce">]
         member __.Restrain   (modelValidator: ModelValidator,
                             ([<ReflectedDefinition>] getter: PropGet<'T, 'U>),
                             (validation: 'U -> ValidationResult)) =

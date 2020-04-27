@@ -6,26 +6,22 @@ open Forme.IntRestraintBuilder
 open Forme.Validator
 open Forme.Common
 
-type Person = { FirstName: string; LastName: string; Age: int }
+type Person = 
+    { FirstName: string
+      LastName: string; 
+      Age: int }
+
+let james =
+    { FirstName = "James"
+      LastName = "Saucier"
+      Age = 33 }
 
 [<Test>]
 let ``Basic model validation`` () =
-
-    let james = {
-        FirstName = "James"
-        LastName = "Saucier"
-        Age = 33
-    }
-
-    let firstNameContraint = stringRestraint {
+    let nameConstraint = stringRestraint {
         notEmpty
         notLongerThan 100
-        must (fun s -> s = "James") "It must equal 'James'"
-    }
-
-    let lastNameContraint = stringRestraint {
-        notEmpty
-        notLongerThan 20
+        notShorterThan 3
     }
 
     let noMinorsOrSeniors = intRestraint {
@@ -33,12 +29,12 @@ let ``Basic model validation`` () =
         atMost 70
     }
 
-    let test = validateFor<Person> {
-        restrain (fun p -> p.FirstName) firstNameContraint
-        restrain (fun p -> p.LastName) lastNameContraint
-        restrain (fun p -> p.Age) noMinorsOrSeniors
+    let nightClubValidation = validateFor<Person> {
+        enforce (fun p -> p.FirstName) nameConstraint
+        enforce (fun p -> p.LastName) nameConstraint
+        enforce (fun p -> p.Age) noMinorsOrSeniors
     }
 
-    match james |> test with
+    match james |> nightClubValidation with
     | Ok -> Assert.Pass()
     | ValidationError e -> failwith "Should have passed validation"

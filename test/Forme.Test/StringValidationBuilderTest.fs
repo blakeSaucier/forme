@@ -55,6 +55,8 @@ let ``Multiple error messages should be joined`` () =
         startsWith "V"
     }
 
+    let expectedError = "Must start with 'V'; Must not be longer than 6"
+
     match "Not a postal code" |> bcPostalCode with
     | Ok -> failwith "Validation should have failed"
-    | ValidationError e -> e.Message |> should equal "Must start with 'V'; Must not be longer than 6"
+    | ValidationError e -> e.Message |> should equal expectedError
