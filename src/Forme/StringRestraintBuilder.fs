@@ -24,7 +24,7 @@ type StringRestraintBuilder() =
     member __.NotEmpty(validators: StringRestraints) =
         let mustNotBeEmpty s =
             match s |> String.IsNullOrWhiteSpace with
-            | true -> ValidationError { Message = "Must not be empty" }
+            | true -> ValidationError { Message = "must not be empty" }
             | false -> Ok
         { validators with Restraints = mustNotBeEmpty :: validators.Restraints }
 
@@ -34,7 +34,7 @@ type StringRestraintBuilder() =
         let notLongerThanLength length str = 
             match str |> String.length <= length with
             | true -> Ok
-            | false -> ValidationError { Message = sprintf "Must not be longer than %i" length }
+            | false -> ValidationError { Message = sprintf "must not be longer than %i" length }
         { validators with Restraints = notLongerThanLength length :: validators.Restraints }
 
     /// The string's length must be at least as long as the specified length
@@ -43,7 +43,7 @@ type StringRestraintBuilder() =
         let atLeastAsLong length str =
             match str |> String.length >= length with
             | true -> Ok
-            | false -> ValidationError { Message = sprintf "Must be at least as long as %i" length }
+            | false -> ValidationError { Message = sprintf "must be at least as long as %i" length }
         { validators with Restraints = atLeastAsLong length :: validators.Restraints }
 
     /// The string must have the specified length
@@ -51,7 +51,7 @@ type StringRestraintBuilder() =
     member __.HasLength(validators: StringRestraints, length) =
         let hasLength length str = 
             if str |> String.length = length then Ok 
-            else ValidationError { Message = sprintf "Must have length %i" length }
+            else ValidationError { Message = sprintf "must have length %i" length }
         { validators with Restraints = hasLength length :: validators.Restraints }
 
     /// The string must start with the supplied substring
@@ -60,7 +60,7 @@ type StringRestraintBuilder() =
         let mustStartWith str (s:string) =
             match s.StartsWith(str) with
             | true -> Ok
-            | false -> ValidationError { Message = sprintf "Must start with '%s'" str }
+            | false -> ValidationError { Message = sprintf "must start with '%s'" str }
         { validators with Restraints = (mustStartWith str) :: validators.Restraints }
 
     /// Describe a custom string validation

@@ -21,13 +21,13 @@ module Validator =
         let allErrors = 
             errors
             |> List.map (fun e -> e.Message)
-            |> String.concat "\n"
+            |> String.concat "; "
         ValidationError { Message = allErrors }
 
     let private getFailures results =
         results |> List.choose (fun v ->
             match v.Result with
-            | ValidationError e -> Some { Message = sprintf "'%s' Failed Validation: %s" v.FieldName e.Message }
+            | ValidationError e -> Some { Message = sprintf "'%s' %s" v.FieldName e.Message }
             | Ok -> None)
 
     let private propNameGetter (getter:Expr<'T -> 'U>) =

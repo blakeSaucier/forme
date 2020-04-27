@@ -22,7 +22,7 @@ let ``Basic string validation failure messages`` () =
 
     match "" |> notEmptyRestraint with
     | Ok -> failwith "Validation should have failed"
-    | ValidationError e -> e.Message |> should equal "Must not be empty"
+    | ValidationError e -> e.Message |> should equal "must not be empty"
 
 [<Test>]
 let ``Length constraint tests`` () =
@@ -55,7 +55,7 @@ let ``Multiple error messages should be joined`` () =
         startsWith "V"
     }
 
-    let expectedError = "Must start with 'V'; Must not be longer than 6"
+    let expectedError = "must start with 'V'; must not be longer than 6"
 
     match "Not a postal code" |> bcPostalCode with
     | Ok -> failwith "Validation should have failed"
