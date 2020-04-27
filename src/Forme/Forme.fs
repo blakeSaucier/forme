@@ -67,4 +67,18 @@ module Validator =
             let restraint = { Restraint = validationFunction; FieldName = propName }
             { Validations = restraint :: modelValidator.Validations }
 
+        [<CustomOperation "it">]
+        member __.ItMust   (modelValidator: ModelValidator,
+                            ([<ReflectedDefinition>] getter: PropGet<'T, 'U>),
+                            (_: unit -> bool),
+                            (validation: 'U -> ValidationResult)) =
+            let propName = propNameGetter getter
+            let typedPropGetter = propGetter getter
+            let validationFunction = fun (value: obj) -> (typedPropGetter >> validation) (value :?> 'T)
+            let restraint = { Restraint = validationFunction; FieldName = propName }
+            { Validations = restraint :: modelValidator.Validations }
+    
+    let mustBe = fun () -> true
+    let mightBe = fun () -> false
+
     let validateFor<'T> = ValidatorBuilder<'T>()

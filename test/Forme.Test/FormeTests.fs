@@ -18,7 +18,7 @@ let james =
 
 [<Test>]
 let ``Basic model validation`` () =
-    let nameConstraint = stringRestraint {
+    let validName = stringRestraint {
         notEmpty
         notLongerThan 100
         notShorterThan 3
@@ -30,9 +30,9 @@ let ``Basic model validation`` () =
     }
 
     let nightClubValidation = validateFor<Person> {
-        enforce (fun p -> p.FirstName) nameConstraint
-        enforce (fun p -> p.LastName) nameConstraint
-        enforce (fun p -> p.Age) noMinorsOrSeniors
+        it (fun p -> p.FirstName)   mustBe validName
+        it (fun p -> p.LastName)    mustBe validName
+        it (fun p -> p.Age)         mustBe noMinorsOrSeniors
     }
 
     match james |> nightClubValidation with
