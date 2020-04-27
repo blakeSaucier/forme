@@ -25,11 +25,34 @@ let ``Basic string validation failure messages`` () =
     | ValidationError e -> e.Message |> should equal "Must not be empty"
 
 [<Test>]
+let ``Length constraint tests`` () =
+    let lengthConstraint = stringRestraint {
+        notLongerThan 50
+        notShorterThan 10
+    }
+
+    match "Hello" |> lengthConstraint with
+    | Ok -> failwith "Should have failed validation"
+    | ValidationError e -> Assert.Pass() 
+    |> ignore
+
+    match "April is the cruelest month" |> lengthConstraint with
+    | Ok -> Assert.Pass
+    | ValidationError e -> failwith "Validaiton should have passed"
+    |> ignore
+
+    match "Howdy" |> stringRestraint { hasLengthOf 5 } with
+    | Ok -> Assert.Pass
+    | ValidationError e -> failwith "Validation should have passed"
+    |> ignore
+
+[<Test>]
 let ``Multiple error messages should be joined`` () =
     let bcPostalCode = stringRestraint {
         notLongerThan 6
+        notShorterThan 6
         notEmpty
-        must (fun s -> s.StartsWith("V")) "Must start with 'V'"
+        startsWith "V"
     }
 
     match "Not a postal code" |> bcPostalCode with
