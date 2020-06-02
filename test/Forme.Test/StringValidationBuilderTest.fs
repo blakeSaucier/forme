@@ -17,11 +17,11 @@ let ``Basic string restraint`` () =
 
 [<Test>]
 let ``Basic string validation failure messages`` () =
-    let notEmptyRestraint = validString { notEmpty }
-
-    match "" |> notEmptyRestraint with
-    | Ok -> failwith "Validation should have failed"
-    | ValidationError e -> e.Message |> should equal "must not be empty"
+    ""
+    |> validString { notEmpty }
+    |> function
+        | Ok -> failwith "Validation should have failed"
+        | ValidationError e -> e.Message |> should equal "must not be empty"
 
 [<Test>]
 let ``Length constraint tests`` () =
@@ -30,20 +30,23 @@ let ``Length constraint tests`` () =
         notShorterThan 10
     }
 
-    match "Hello" |> lengthConstraint with
-    | Ok -> failwith "Should have failed validation"
-    | ValidationError e -> Assert.Pass() 
-    |> ignore
+    "Hello"
+    |> lengthConstraint
+    |> function
+        | Ok -> failwith "Should have failed validation"
+        | ValidationError e -> Assert.Pass()
 
-    match "April is the cruelest month" |> lengthConstraint with
-    | Ok -> Assert.Pass
-    | ValidationError e -> failwith "Validaiton should have passed"
-    |> ignore
+    "April is the cruelest month"
+    |> lengthConstraint
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError e -> failwith "Validaiton should have passed"
 
-    match "Howdy" |> validString { hasLengthOf 5 } with
-    | Ok -> Assert.Pass
-    | ValidationError e -> failwith "Validation should have passed"
-    |> ignore
+    "Howdy"
+    |> validString { hasLengthOf 5 }
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError e -> failwith "Validation should have passed"
 
 [<Test>]
 let ``String to Int parsing`` () =
@@ -52,16 +55,14 @@ let ``String to Int parsing`` () =
     "12"
     |> parsable
     |> function
-        | Ok -> Assert.Pass
+        | Ok -> Assert.Pass()
         | ValidationError _ -> failwith "Validation should have passed"
-    |> ignore
 
     "twelve"
     |> parsable
     |> function
         | Ok -> failwith "Should have failed"
         | ValidationError e -> e.Message |> should equal "'twelve' is not parsable as an Int32"
-    |> ignore
 
 [<Test>]
 let ``Multiple error messages should be joined`` () =
@@ -74,6 +75,8 @@ let ``Multiple error messages should be joined`` () =
 
     let expectedError = "must start with 'V'; must not be longer than 6"
 
-    match "Not a postal code" |> bcPostalCode with
-    | Ok -> failwith "Validation should have failed"
-    | ValidationError e -> e.Message |> should equal expectedError
+    "Not a postal code"
+    |> bcPostalCode
+    |> function
+        | Ok -> failwith "Validation should have failed"
+        | ValidationError e -> e.Message |> should equal expectedError

@@ -32,9 +32,11 @@ let ``Basic model validation`` () =
         rule (fun p -> p.Age)        noMinors
     }
 
-    match james |> isAllowedToBuyBeer with
-    | Ok -> Assert.Pass()
-    | ValidationError e -> failwith "Should have passed validation"
+    james
+    |> isAllowedToBuyBeer
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError e -> failwith "Should have passed validation"
 
 [<Test>]
 let ``Model validation error message test `` () =
@@ -51,6 +53,8 @@ let ``Model validation error message test `` () =
 
     let expectedError = "'Age' must be at least 19; 'LastName' must be at least as long as 3"
 
-    match blake |> isValid with
-    | Ok -> Assert.Fail()
-    | ValidationError e -> e.Message |> should equal expectedError
+    blake
+    |> isValid
+    |> function
+        | Ok -> Assert.Fail()
+        | ValidationError e -> e.Message |> should equal expectedError
