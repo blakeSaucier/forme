@@ -2,7 +2,6 @@
 
 open System
 open Common
-open FSharp
 
 type StringRestraint = string -> ValidationResult
 
@@ -33,18 +32,22 @@ type StringRestraintBuilder() =
     [<CustomOperation "notLongerThan">]
     member __.NotLongerThan(validators: StringRestraints, length) =
         let notLongerThanLength length str = 
-            match str |> String.length <= length with
-            | true -> Ok
-            | false -> ValidationError { Message = sprintf "must not be longer than %i" length }
+            str
+            |> String.length <= length
+            |> function
+                | true -> Ok
+                | false -> ValidationError { Message = sprintf "must not be longer than %i" length }
         { validators with Restraints = notLongerThanLength length :: validators.Restraints }
 
     /// The string's length must be at least as long as the specified length
     [<CustomOperation "notShorterThan">]
     member __.NotShorterThan(validators: StringRestraints, length) =
         let atLeastAsLong length str =
-            match str |> String.length >= length with
-            | true -> Ok
-            | false -> ValidationError { Message = sprintf "must be at least as long as %i" length }
+            str
+            |> String.length >= length
+            |> function 
+                | true -> Ok
+                | false -> ValidationError { Message = sprintf "must be at least as long as %i" length }
         { validators with Restraints = atLeastAsLong length :: validators.Restraints }
 
     /// The string must have the specified length
@@ -59,9 +62,11 @@ type StringRestraintBuilder() =
     [<CustomOperation "startsWith">]
     member __.StartsWith(validators: StringRestraints, str) =
         let mustStartWith str (s:string) =
-            match s.StartsWith(str) with
-            | true -> Ok
-            | false -> ValidationError { Message = sprintf "must start with '%s'" str }
+            str
+            |> s.StartsWith
+            |> function 
+                | true -> Ok
+                | false -> ValidationError { Message = sprintf "must start with '%s'" str }
         { validators with Restraints = (mustStartWith str) :: validators.Restraints }
 
     /// The string must be parsable using Int32.TryParse
