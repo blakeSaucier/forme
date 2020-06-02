@@ -47,6 +47,24 @@ let ``Length constraint tests`` () =
     |> ignore
 
 [<Test>]
+let ``String to Int parsing`` () =
+    let parsable = validString { parsable_int }
+    
+    "12"
+    |> parsable
+    |> function
+        | Ok -> Assert.Pass
+        | ValidationError _ -> failwith "Validation should have passed"
+    |> ignore
+
+    "twelve"
+    |> parsable
+    |> function
+        | Ok -> failwith "Should have failed"
+        | ValidationError e -> e.Message |> should equal "'twelve' is not parsable as an Int32"
+    |> ignore
+
+[<Test>]
 let ``Multiple error messages should be joined`` () =
     let bcPostalCode = validString {
         notLongerThan 6

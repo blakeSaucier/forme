@@ -2,6 +2,7 @@
 
 open System
 open Common
+open FSharp
 
 type StringRestraint = string -> ValidationResult
 
@@ -62,6 +63,18 @@ type StringRestraintBuilder() =
             | true -> Ok
             | false -> ValidationError { Message = sprintf "must start with '%s'" str }
         { validators with Restraints = (mustStartWith str) :: validators.Restraints }
+
+    /// The string must be parsable using Int32.TryParse
+    [<CustomOperation "parsable_int">]
+    member __.ParsableInt(validators: StringRestraints) =
+        let mustBeParsableInt str =
+            str
+            |> Int32.TryParse
+            |> fun (res, _) -> res
+            |> function
+                | true -> Ok
+                | false -> ValidationError { Message = sprintf "'%s' is not parsable as an Int32" str }
+        { validators with Restraints = mustBeParsableInt :: validators.Restraints }
 
     /// Describe a custom string validation
     [<CustomOperation "must">]
