@@ -7,7 +7,7 @@ open FsUnit
 
 [<Test>]
 let ``Basic string restraint`` () =
-    let nameRestraint = stringRestraint {
+    let nameRestraint = validString {
         notEmpty
         notLongerThan 50
     }
@@ -18,7 +18,7 @@ let ``Basic string restraint`` () =
 
 [<Test>]
 let ``Basic string validation failure messages`` () =
-    let notEmptyRestraint = stringRestraint { notEmpty }
+    let notEmptyRestraint = validString { notEmpty }
 
     match "" |> notEmptyRestraint with
     | Ok -> failwith "Validation should have failed"
@@ -26,7 +26,7 @@ let ``Basic string validation failure messages`` () =
 
 [<Test>]
 let ``Length constraint tests`` () =
-    let lengthConstraint = stringRestraint {
+    let lengthConstraint = validString {
         notLongerThan 50
         notShorterThan 10
     }
@@ -41,14 +41,14 @@ let ``Length constraint tests`` () =
     | ValidationError e -> failwith "Validaiton should have passed"
     |> ignore
 
-    match "Howdy" |> stringRestraint { hasLengthOf 5 } with
+    match "Howdy" |> validString { hasLengthOf 5 } with
     | Ok -> Assert.Pass
     | ValidationError e -> failwith "Validation should have passed"
     |> ignore
 
 [<Test>]
 let ``Multiple error messages should be joined`` () =
-    let bcPostalCode = stringRestraint {
+    let bcPostalCode = validString {
         notLongerThan 6
         notShorterThan 6
         notEmpty

@@ -57,7 +57,7 @@ module Validator =
             | [] -> Ok
             | errs -> reduceErrors errs
 
-        [<CustomOperation "enforce">]
+        [<CustomOperation "rule">]
         member __.Restrain   (modelValidator: ModelValidator,
                             ([<ReflectedDefinition>] getter: PropGet<'T, 'U>),
                             (validation: 'U -> ValidationResult)) =
@@ -81,4 +81,4 @@ module Validator =
     let mustBe = fun () -> true
     let mightBe = fun () -> false
 
-    let validateFor<'T> = ValidatorBuilder<'T>()
+    let valid<'T> = ValidatorBuilder<'T>()

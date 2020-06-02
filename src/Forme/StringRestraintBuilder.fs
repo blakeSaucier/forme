@@ -72,4 +72,4 @@ type StringRestraintBuilder() =
             | false -> ValidationError { Message = message }
         { validators with Restraints = customRestraint :: validators.Restraints }
 
-let stringRestraint = StringRestraintBuilder()
+let validString = StringRestraintBuilder()

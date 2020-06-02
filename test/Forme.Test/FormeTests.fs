@@ -12,13 +12,13 @@ type Person =
       LastName: string; 
       Age: int }
 
-let validName = stringRestraint {
+let validName = validString {
     notEmpty
     notLongerThan 100
     notShorterThan 3
 }
 
-let noMinors = intRestraint {
+let noMinors = validInt {
     atLeast 19
 }
 
@@ -29,10 +29,10 @@ let ``Basic model validation`` () =
           LastName = "Saucier"
           Age = 33 }
 
-    let isAllowedToBuyBeer = validateFor<Person> {
-        it (fun p -> p.FirstName)   mustBe validName
-        it (fun p -> p.LastName)    mustBe validName
-        it (fun p -> p.Age)         mustBe noMinors
+    let isAllowedToBuyBeer = valid<Person> {
+        rule (fun p -> p.FirstName)  validName
+        rule (fun p -> p.LastName)   validName
+        rule (fun p -> p.Age)        noMinors
     }
 
     match james |> isAllowedToBuyBeer with
@@ -46,10 +46,10 @@ let ``Model validation error message test `` () =
           LastName = "T"
           Age = 12 }
 
-    let isValid = validateFor<Person> {
-        it (fun p -> p.FirstName) mustBe validName
-        it (fun p -> p.LastName) mustBe validName
-        it (fun p -> p.Age) mustBe noMinors
+    let isValid = valid<Person> {
+        rule (fun p -> p.FirstName) validName
+        rule (fun p -> p.LastName)  validName
+        rule (fun p -> p.Age)       noMinors
     }
 
     let expectedError = "'Age' must be at least 19; 'LastName' must be at least as long as 3"

@@ -6,7 +6,7 @@ open Forme.Common
 
 [<Test>]
 let ``Basic Int restraint `` () =
-    let ageRestraint = intRestraint {
+    let ageRestraint = validInt {
         atLeast 19
         atMost 90
     }

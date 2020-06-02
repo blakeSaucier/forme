@@ -38,4 +38,4 @@ type IntRestraintBuilder() =
             if i <> 0 then Ok else ValidationError { Message = "must not equal zero" }
         { validators with Restraints = mustNotBeZero :: validators.Restraints }
 
-let intRestraint = IntRestraintBuilder()
+let validInt = IntRestraintBuilder()
