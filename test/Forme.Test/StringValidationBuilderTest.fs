@@ -1,8 +1,7 @@
 ﻿module Forme.Test.StringValidationBuilderTest
 
 open NUnit.Framework
-open Forme.StringValidationBuilder
-open Forme.Common
+open Forme
 open FsUnit
 
 [<Test>]

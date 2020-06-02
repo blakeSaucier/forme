@@ -1,10 +1,7 @@
 ﻿module Forme.Test.FormeTests
 
 open NUnit.Framework
-open Forme.StringValidationBuilder
-open Forme.IntRestraintBuilder
-open Forme.Validator
-open Forme.Common
+open Forme
 open FsUnit
 
 type Person = 

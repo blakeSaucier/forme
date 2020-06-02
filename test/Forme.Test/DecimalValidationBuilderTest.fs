@@ -1,8 +1,7 @@
 ﻿module Forme.Test.DecimalValidationBuilderTest
 
 open NUnit.Framework
-open Forme.DecimalRestraintBuilder
-open Forme.Common
+open Forme
 
 [<Test>]
 let ``Basic Decimal validation`` () =

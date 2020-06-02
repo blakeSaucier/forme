@@ -4,19 +4,21 @@ open Forme.Common
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 
-type PropGet<'T, 'U> = Expr<'T -> 'U>
-
-type PropertyValidator = 
-    { Restraint: obj -> ValidationResult
-      FieldName: string }
-
-type PropertyValidated =
-    { Result: ValidationResult
-      FieldName: string }
-
-type ModelValidator = { Validations: PropertyValidator list }
-
+[<AutoOpen>]
 module Validator =
+
+    type PropGet<'T, 'U> = Expr<'T -> 'U>
+
+    type PropertyValidator = 
+        { Restraint: obj -> ValidationResult
+          FieldName: string }
+
+    type PropertyValidated =
+        { Result: ValidationResult
+          FieldName: string }
+
+    type ModelValidator = { Validations: PropertyValidator list }
+
     let private reduceErrors errors =
         let allErrors = 
             errors

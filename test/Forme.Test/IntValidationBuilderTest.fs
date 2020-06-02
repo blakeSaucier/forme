@@ -1,8 +1,7 @@
 ﻿module Forme.Test.IntValidationBuilderTest
 
 open NUnit.Framework
-open Forme.IntRestraintBuilder
-open Forme.Common
+open Forme
 
 [<Test>]
 let ``Basic Int validation `` () =

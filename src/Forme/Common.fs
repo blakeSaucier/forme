@@ -1,4 +1,6 @@
 ﻿namespace Forme
+
+[<AutoOpen>]
 module Common =
     type Error = { Message: string }
 
