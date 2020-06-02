@@ -9,14 +9,9 @@ type IntRestraints = { Restraints: IntRestraint list }
 type IntRestraintBuilder() =
     member __.Yield _ = { Restraints = List.empty }
     member __.Run (validations: IntRestraints) i =
-        let evaluated = validations.Restraints |> List.map (fun v -> v i)
-        let failures = evaluated |> List.choose (fun v ->
-            match v with
-            | ValidationError err -> Some err
-            | _ -> None)
-        match failures with
-            | [] -> Ok
-            | errors -> joinErrorMessages errors
+        validations.Restraints
+        |> List.map (fun v -> v i)
+        |> collectErrors
 
     [<CustomOperation "atLeast">]
     member __.AtLeast(validators: IntRestraints, minimum) =

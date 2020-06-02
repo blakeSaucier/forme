@@ -12,4 +12,15 @@ module Common =
             |> List.map (fun e -> e.Message)
             |> String.concat "; "
         ValidationError { Message = allErrors }
+
+    let collectErrors evaluated =
+        evaluated
+        |> List.choose
+            (function
+            | ValidationError err -> Some err
+            | _ -> None)
+        |> function
+            | [] -> Ok
+            | errors -> joinErrorMessages errors
+
     
