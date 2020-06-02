@@ -11,25 +11,28 @@ type Person =
       LastName: string; 
       Age: int }
 
-let validName = stringRestraint {
+let aReasonableName = validString {
     notEmpty
     notLongerThan 100
     notShorterThan 3
 }
 
-let noMinorsOrSeniors = intRestraint {
+let noMinorsOrSeniors = validInt {
     atLeast 19
     atMost 70
 }
 
-let canEnterNightClub = validateFor<Person> {
-    it (fun p -> p.FirstName)   mustBe validName
-    it (fun p -> p.LastName)    mustBe validName
-    it (fun p -> p.Age)         mustBe noMinorsOrSeniors
+let canEnterNightClub = valid<Person> {
+    rule (fun p -> p.FirstName) aReasonableName
+    rule (fun p -> p.LastName)  aReasonableName
+    rule (fun p -> p.Age)       noMinorsOrSeniors
 }
 
-match person |> canEnterNightClub with
-| Ok -> person
-| ValidationError error -> error.Message // etc
+person 
+|> canEnterNightClub
+|> function
+    | Ok -> person
+    | ValidationError error -> error.Message 
+// etc
 
 ```
