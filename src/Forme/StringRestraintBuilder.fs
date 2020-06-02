@@ -8,28 +8,25 @@ module StringValidationBuilder =
 
     type StringRestraint = string -> ValidationResult
 
-    type StringRestraints = { Restraints: StringRestraint list }
+    type StringRestraints = StringRestraint list
 
     type StringRestraintBuilder() =
-        member __.Yield _ = { Restraints = List.Empty }
-        member __.Run(validation: StringRestraints) (str: string) =
-            let evaluated = validation.Restraints |> List.map (fun v -> v str)
-            let failures = evaluated |> List.choose (fun v ->
-                match v with
-                | ValidationError err -> Some err
-                | _ -> None)
-            match failures with
-                | [] -> Ok
-                | errors -> joinErrorMessages errors
+        member __.Yield _ : StringRestraints = List.Empty
+        member __.Run validations str =
+            validations
+            |> List.map (fun v -> v str)
+            |> collectErrors
 
         /// String cannot be null or whitespace
         [<CustomOperation "notEmpty">]
         member __.NotEmpty(validators: StringRestraints) =
             let mustNotBeEmpty s =
-                match s |> String.IsNullOrWhiteSpace with
-                | true -> ValidationError { Message = "must not be empty" }
-                | false -> Ok
-            { validators with Restraints = mustNotBeEmpty :: validators.Restraints }
+                s 
+                |> String.IsNullOrWhiteSpace
+                |> function
+                    | true -> ValidationError { Message = "must not be empty" }
+                    | false -> Ok
+            mustNotBeEmpty :: validators
 
         /// The string's length must be less than or equal to the specified length
         [<CustomOperation "notLongerThan">]
@@ -40,7 +37,7 @@ module StringValidationBuilder =
                 |> function
                     | true -> Ok
                     | false -> ValidationError { Message = sprintf "must not be longer than %i" length }
-            { validators with Restraints = notLongerThanLength length :: validators.Restraints }
+            notLongerThanLength length :: validators
 
         /// The string's length must be at least as long as the specified length
         [<CustomOperation "notShorterThan">]
@@ -51,15 +48,18 @@ module StringValidationBuilder =
                 |> function 
                     | true -> Ok
                     | false -> ValidationError { Message = sprintf "must be at least as long as %i" length }
-            { validators with Restraints = atLeastAsLong length :: validators.Restraints }
+            atLeastAsLong length :: validators
 
         /// The string must have the specified length
         [<CustomOperation "hasLengthOf">]
         member __.HasLength(validators: StringRestraints, length) =
             let hasLength length str = 
-                if str |> String.length = length then Ok 
-                else ValidationError { Message = sprintf "must have length %i" length }
-            { validators with Restraints = hasLength length :: validators.Restraints }
+                str
+                |> String.length = length
+                |> function
+                    | true -> Ok 
+                    | false -> ValidationError { Message = sprintf "must have length %i" length }
+            hasLength length :: validators
 
         /// The string must start with the supplied substring
         [<CustomOperation "startsWith">]
@@ -70,7 +70,7 @@ module StringValidationBuilder =
                 |> function 
                     | true -> Ok
                     | false -> ValidationError { Message = sprintf "must start with '%s'" str }
-            { validators with Restraints = (mustStartWith str) :: validators.Restraints }
+            (mustStartWith str) :: validators
 
         /// The string must be parsable using Int32.TryParse
         [<CustomOperation "parsable_int">]
@@ -82,15 +82,17 @@ module StringValidationBuilder =
                 |> function
                     | true -> Ok
                     | false -> ValidationError { Message = sprintf "'%s' is not parsable as an Int32" str }
-            { validators with Restraints = mustBeParsableInt :: validators.Restraints }
+            mustBeParsableInt :: validators
 
         /// Describe a custom string validation
         [<CustomOperation "must">]
         member __.Must(validators: StringRestraints, (restraint: string -> bool), message) =
             let customRestraint str  =
-                match restraint str with
-                | true -> Ok
-                | false -> ValidationError { Message = message }
-            { validators with Restraints = customRestraint :: validators.Restraints }
+                str
+                |> restraint
+                |> function
+                    | true -> Ok
+                    | false -> ValidationError { Message = message }
+            customRestraint :: validators
 
     let validString = StringRestraintBuilder()
