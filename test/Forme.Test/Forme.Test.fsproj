@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="DecimalValidationBuilderTest.fs" />
     <Compile Include="IntValidationBuilderTest.fs" />
     <Compile Include="StringValidationBuilderTest.fs" />
     <Compile Include="FormeTests.fs" />

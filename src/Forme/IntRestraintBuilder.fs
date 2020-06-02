@@ -21,7 +21,7 @@ type IntRestraintBuilder() =
         { validators with Restraints = partial :: validators.Restraints }
 
     [<CustomOperation "atMost">]
-    member __.AtMost(validators: IntRestraints, maximum: int) =
+    member __.AtMost(validators: IntRestraints, maximum) =
         let atMost max i =
             if i <= max then Ok else ValidationError { Message = (sprintf "must be at most %i" max) }
         let partial = atMost maximum
