@@ -8,7 +8,7 @@ module DecimalRestraintBuilder =
 
     type DecimalRestraintBuilder () =
         member __.Yield _ : DecimalRestraints = List.empty
-        member __.Run (validations: DecimalRestraints) d =
+        member __.Run validations (d: decimal) =
             validations
             |> List.map (fun v -> v d)
             |> collectErrors
@@ -36,5 +36,13 @@ module DecimalRestraintBuilder =
                 | true -> ValidationError [{ Message = "must not equal zero" }]
                 | false -> Ok
             notZero :: validations
+
+        [<CustomOperation "equal">]
+        member __.Equal (validations: DecimalRestraints, mustEqual) =
+            let equals mustBe d =
+                match mustBe = d with
+                | true -> Ok
+                | false -> ValidationError [{ Message = sprintf "Must equal %M" mustBe }]
+            (equals mustEqual) :: validations
 
     let validDecimal = DecimalRestraintBuilder()

@@ -84,15 +84,29 @@ module StringValidationBuilder =
                     | false -> ValidationError [{ Message = sprintf "'%s' is not parsable as an Int32" str }]
             mustBeParsableInt :: validators
 
+        [<CustomOperation "equal">]
+        member __.Equal (validators: StringRestraints, mustEqual) =
+            let equals mustBe s =
+                match String.Equals(mustBe, s, StringComparison.CurrentCulture) with
+                | true -> Ok
+                | false -> ValidationError [{ Message = sprintf "Must equal %s" mustBe }]
+            (equals mustEqual) :: validators
+
+        [<CustomOperation "equal">]
+        member __.Equal (validators: StringRestraints, mustEqual, culture:StringComparison) =
+            let equals mustBe s =
+                match String.Equals(mustBe, s, culture) with
+                | true -> Ok
+                | false -> ValidationError [{ Message = sprintf "Must equal %s" mustBe }]
+            (equals mustEqual) :: validators
+
         /// Describe a custom string validation
         [<CustomOperation "must">]
         member __.Must(validators: StringRestraints, (restraint: string -> bool), message) =
             let customRestraint str  =
-                str
-                |> restraint
-                |> function
-                    | true -> Ok
-                    | false -> ValidationError [{ Message = message }]
+                match (restraint str) with
+                | true -> Ok
+                | false -> ValidationError [{ Message = message }]
             customRestraint :: validators
 
     let validString = StringRestraintBuilder()
