@@ -2,6 +2,7 @@
 
 open System
 open Common
+open Email
 
 [<AutoOpen>]
 module StringValidationBuilder =
@@ -99,6 +100,14 @@ module StringValidationBuilder =
                 | true -> Ok
                 | false -> ValidationError [{ Message = sprintf "Must equal %s" mustBe }]
             (equals mustEqual) :: validators
+
+        [<CustomOperation "email">]
+        member __.Email (validators: StringRestraints) =
+            let isEmail str =
+                match str with
+                | Email a -> Ok
+                | _ -> ValidationError [{ Message = sprintf "'%s' is not a valid email" str }]
+            isEmail :: validators
 
         /// Describe a custom string validation
         [<CustomOperation "must">]

@@ -80,3 +80,19 @@ let ``Multiple error messages should be joined`` () =
     |> function
         | Ok -> failwith "Validation should have failed"
         | ValidationError e -> e |> should equal expectedError
+
+[<Test>]
+let ``Valid email`` () =
+    "a@gmail.com"
+    |> validString { email }
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError e -> failwith "Should have passed validation"
+
+[<Test>]
+let ``Invalid Email`` () =
+    "@gmail.com"
+    |> validString { email }
+    |> function
+        | Ok -> failwith "Validation should have failed"
+        | ValidationError e -> e |> should equal [{ Message = "'@gmail.com' is not a valid email" }]
