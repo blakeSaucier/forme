@@ -21,7 +21,7 @@ let ``Basic string validation failure messages`` () =
     |> validString { notEmpty }
     |> function
         | Ok -> failwith "Validation should have failed"
-        | ValidationError e -> e.Message |> should equal "must not be empty"
+        | ValidationError e -> e |> should equal [{ Message = "must not be empty" }]
 
 [<Test>]
 let ``Length constraint tests`` () =
@@ -62,7 +62,7 @@ let ``String to Int parsing`` () =
     |> parsable
     |> function
         | Ok -> failwith "Should have failed"
-        | ValidationError e -> e.Message |> should equal "'twelve' is not parsable as an Int32"
+        | ValidationError e -> e |> should equal [{ Message = "'twelve' is not parsable as an Int32" }]
 
 [<Test>]
 let ``Multiple error messages should be joined`` () =
@@ -73,10 +73,10 @@ let ``Multiple error messages should be joined`` () =
         startsWith "V"
     }
 
-    let expectedError = "must start with 'V'; must not be longer than 6"
+    let expectedError = [{ Message = "must start with 'V'"}; { Message = "must not be longer than 6" }]
 
     "Not a postal code"
     |> bcPostalCode
     |> function
         | Ok -> failwith "Validation should have failed"
-        | ValidationError e -> e.Message |> should equal expectedError
+        | ValidationError e -> e |> should equal expectedError

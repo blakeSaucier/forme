@@ -18,7 +18,7 @@ let ``Decimal non zero validation`` () =
     |> validDecimal { notZero }
     |> function
         | Ok -> failwith "Should have failed validation"
-        | ValidationError e -> e.Message |> should equal "must not equal zero"
+        | ValidationError e -> e |> should equal [{ Message = "must not equal zero" }]
 
 [<Test>]
 let ``Decimal zero precision validation`` () =

@@ -18,7 +18,7 @@ module DecimalRestraintBuilder =
             let atLeast min d =
                 match d >= min with
                 | true -> Ok
-                | false -> ValidationError { Message = (sprintf "must be at least %M" min) }
+                | false -> ValidationError [{ Message = (sprintf "must be at least %M" min) }]
             (atLeast minimum) :: validations
 
         [<CustomOperation "atMost">]
@@ -26,14 +26,14 @@ module DecimalRestraintBuilder =
             let atMost max d =
                 match max <= d with
                 | true -> Ok
-                | false -> ValidationError { Message = (sprintf "must be at most %M" max) }
+                | false -> ValidationError [{ Message = (sprintf "must be at most %M" max) }]
             (atMost maximum) :: validations
 
         [<CustomOperation "notZero">]
         member __.NotZero (validations) =
             let notZero d =
                 match d = 0M with
-                | true -> ValidationError { Message = "must not equal zero" }
+                | true -> ValidationError [{ Message = "must not equal zero" }]
                 | false -> Ok
             notZero :: validations
 

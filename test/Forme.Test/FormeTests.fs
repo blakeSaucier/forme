@@ -51,10 +51,10 @@ let ``Model validation error message test `` () =
         rule (fun p -> p.Age)       noMinors
     }
 
-    let expectedError = "'Age' must be at least 19; 'LastName' must be at least as long as 3"
+    let expectedError = [{ Message = "'Age' must be at least 19"}; { Message = "'LastName' must be at least as long as 3"}]
 
     blake
     |> isValid
     |> function
         | Ok -> Assert.Fail()
-        | ValidationError e -> e.Message |> should equal expectedError
+        | ValidationError e -> e |> should equal expectedError

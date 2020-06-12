@@ -5,24 +5,26 @@ module Common =
     type Error = { Message: string }
 
     type ValidationResult =
-        | ValidationError of Error
+        | ValidationError of Error list
         | Ok
 
-    let joinErrorMessages errors =
-        let allErrors = 
-            errors
-            |> List.map (fun e -> e.Message)
-            |> String.concat "; "
-        ValidationError { Message = allErrors }
+    let takeError result =
+        result
+        |> function
+            | ValidationError e -> Some e
+            | _ -> None
+
+    let takeErrors lst =
+        lst |> List.choose takeError
 
     let collectErrors evaluated =
         evaluated
-        |> List.choose
-            (function
-            | ValidationError err -> Some err
-            | _ -> None)
+        |> takeErrors
         |> function
             | [] -> Ok
-            | errors -> joinErrorMessages errors
+            | errors ->
+                errors
+                |> List.concat
+                |> ValidationError
 
     

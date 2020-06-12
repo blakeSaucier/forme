@@ -19,18 +19,16 @@ module Validator =
 
     type ModelValidator = PropertyValidator list
 
-    let private reduceErrors errors =
-        let allErrors = 
-            errors
-            |> List.map (fun e -> e.Message)
-            |> String.concat "; "
-        ValidationError { Message = allErrors }
+    let combine (errors: Error list) =
+        errors
+        |> List.map (fun e -> e.Message)
+        |> String.concat "; "
 
     let private getFailures results =
         results
         |> List.choose (fun v ->
             match v.Result with
-            | ValidationError e -> Some { Message = sprintf "'%s' %s" v.FieldName e.Message }
+            | ValidationError e -> Some { Message = sprintf "'%s' %s" v.FieldName (combine e) }
             | Ok -> None)
 
     let private propertyName (getter:Expr<'T -> 'U>) =
@@ -44,7 +42,7 @@ module Validator =
     let private propGetter (getter:Expr<'T -> 'U>) =
         let rec matchPropGet expr =
             match expr with
-            | Patterns.PropertyGet(_, p, _) -> (fun (t:'T) -> p.GetValue(t) :?> 'U)
+            | Patterns.PropertyGet(_, p, _) -> fun (t:'T) -> p.GetValue(t) :?> 'U
             | Lambda(_, ex) -> matchPropGet ex
             | _ -> failwith "Unsupported Expression"
         matchPropGet getter
@@ -56,7 +54,7 @@ module Validator =
         |> getFailures
         |> function
             | [] -> Ok
-            | errors -> reduceErrors errors
+            | errors -> ValidationError errors
 
     type ValidatorBuilder<'T>() =
         member __.Yield _ : ModelValidator = List.Empty

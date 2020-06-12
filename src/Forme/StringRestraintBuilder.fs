@@ -24,7 +24,7 @@ module StringValidationBuilder =
                 s 
                 |> String.IsNullOrWhiteSpace
                 |> function
-                    | true -> ValidationError { Message = "must not be empty" }
+                    | true -> ValidationError [{ Message = "must not be empty" }]
                     | false -> Ok
             mustNotBeEmpty :: validators
 
@@ -36,7 +36,7 @@ module StringValidationBuilder =
                 |> String.length <= length
                 |> function
                     | true -> Ok
-                    | false -> ValidationError { Message = sprintf "must not be longer than %i" length }
+                    | false -> ValidationError [{ Message = sprintf "must not be longer than %i" length }]
             notLongerThanLength length :: validators
 
         /// The string's length must be at least as long as the specified length
@@ -47,7 +47,7 @@ module StringValidationBuilder =
                 |> String.length >= length
                 |> function 
                     | true -> Ok
-                    | false -> ValidationError { Message = sprintf "must be at least as long as %i" length }
+                    | false -> ValidationError [{ Message = sprintf "must be at least as long as %i" length }]
             atLeastAsLong length :: validators
 
         /// The string must have the specified length
@@ -58,7 +58,7 @@ module StringValidationBuilder =
                 |> String.length = length
                 |> function
                     | true -> Ok 
-                    | false -> ValidationError { Message = sprintf "must have length %i" length }
+                    | false -> ValidationError [{ Message = sprintf "must have length %i" length }]
             hasLength length :: validators
 
         /// The string must start with the supplied substring
@@ -69,7 +69,7 @@ module StringValidationBuilder =
                 |> s.StartsWith
                 |> function 
                     | true -> Ok
-                    | false -> ValidationError { Message = sprintf "must start with '%s'" str }
+                    | false -> ValidationError [{ Message = sprintf "must start with '%s'" str }]
             (mustStartWith str) :: validators
 
         /// The string must be parsable using Int32.TryParse
@@ -81,7 +81,7 @@ module StringValidationBuilder =
                 |> fun (res, _) -> res
                 |> function
                     | true -> Ok
-                    | false -> ValidationError { Message = sprintf "'%s' is not parsable as an Int32" str }
+                    | false -> ValidationError [{ Message = sprintf "'%s' is not parsable as an Int32" str }]
             mustBeParsableInt :: validators
 
         /// Describe a custom string validation
@@ -92,7 +92,7 @@ module StringValidationBuilder =
                 |> restraint
                 |> function
                     | true -> Ok
-                    | false -> ValidationError { Message = message }
+                    | false -> ValidationError [{ Message = message }]
             customRestraint :: validators
 
     let validString = StringRestraintBuilder()
