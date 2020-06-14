@@ -78,6 +78,15 @@ module StringValidationBuilder =
                 | _ -> ValidationError [{ Message = sprintf "'%s' is not parsable as an Int32" str }]
             mustBeParsableInt :: validators
 
+        /// The string must be parsable using Decimal.TryParse
+        [<CustomOperation "parsable_decimal">]
+        member __.ParsableDecimal(validators: StringRestraints) =
+            let mustBeParsableDecimal str =
+                match str with
+                | Decimal _ -> Ok
+                | _ -> ValidationError [{ Message = sprintf "'%s' is not parsable as a decimal" str }]
+            mustBeParsableDecimal :: validators
+
         [<CustomOperation "equal">]
         member __.Equal (validators: StringRestraints, mustEqual) =
             let equals mustBe s =

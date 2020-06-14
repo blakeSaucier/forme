@@ -9,6 +9,11 @@ module internal StringHelper =
         | (true, i) -> Some i
         | _ -> None
 
+    let (|Decimal|_|) str =
+        match Decimal.TryParse str with
+        | (true, d) -> Some d
+        | _ -> None
+
     let (|StartsWith|_|) (startsWith: string) (str: string) =
         match str.StartsWith startsWith with
         | true -> Some str

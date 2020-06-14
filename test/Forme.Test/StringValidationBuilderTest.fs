@@ -65,6 +65,26 @@ let ``String to Int parsing`` () =
         | ValidationError e -> e |> should equal [{ Message = "'twelve' is not parsable as an Int32" }]
 
 [<Test>]
+let ``String to decimal should pass parsing`` () =
+    let parasableRestraint = validString { parsable_decimal }
+    
+    "12.0001"
+    |> parasableRestraint
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError e -> failwith "Should have passed validation"
+
+[<Test>]
+let ``String to decimal should fail parsing`` () =
+    let parasableRestraint = validString { parsable_decimal }
+
+    "twelve"
+    |> parasableRestraint
+    |> function
+        | Ok -> failwith "Should have failed validation"
+        | ValidationError e -> e |> should equal [{ Message = "'twelve' is not parsable as a decimal" }]
+
+[<Test>]
 let ``Multiple error messages should be joined`` () =
     let bcPostalCode = validString {
         notLongerThan 6
