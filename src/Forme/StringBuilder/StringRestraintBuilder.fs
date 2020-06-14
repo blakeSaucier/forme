@@ -92,15 +92,15 @@ module StringValidationBuilder =
             let equals mustBe s =
                 match String.Equals(mustBe, s, StringComparison.CurrentCulture) with
                 | true -> Ok
-                | false -> ValidationError [{ Message = sprintf "Must equal %s" mustBe }]
+                | false -> ValidationError [{ Message = sprintf "Must equal '%s'" mustBe }]
             (equals mustEqual) :: validators
 
-        [<CustomOperation "equal">]
-        member __.Equal (validators: StringRestraints, mustEqual, culture:StringComparison) =
+        [<CustomOperation "equal_culture">]
+        member __.EqualCulture (validators: StringRestraints, mustEqual, culture:StringComparison) =
             let equals mustBe s =
                 match String.Equals(mustBe, s, culture) with
                 | true -> Ok
-                | false -> ValidationError [{ Message = sprintf "Must equal %s" mustBe }]
+                | false -> ValidationError [{ Message = sprintf "Must equal '%s'" mustBe }]
             (equals mustEqual) :: validators
 
         [<CustomOperation "email">]

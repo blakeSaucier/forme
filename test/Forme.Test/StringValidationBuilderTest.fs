@@ -1,4 +1,4 @@
-﻿module Forme.Test.StringValidationBuilderTest
+﻿module Forme.Test.``String Validation Builder``
 
 open NUnit.Framework
 open Forme
@@ -49,7 +49,7 @@ let ``Length constraint tests`` () =
         | ValidationError e -> failwith "Validation should have passed"
 
 [<Test>]
-let ``String to Int parsing`` () =
+let ``String to Int parsing should pass`` () =
     let parsable = validString { parsable_int }
     
     "12"
@@ -58,28 +58,31 @@ let ``String to Int parsing`` () =
         | Ok -> Assert.Pass()
         | ValidationError _ -> failwith "Validation should have passed"
 
+let ``String to Int parsing should fail`` () =
+    let parsableInt = validString { parsable_int }
+
     "twelve"
-    |> parsable
+    |> parsableInt
     |> function
         | Ok -> failwith "Should have failed"
-        | ValidationError e -> e |> should equal [{ Message = "'twelve' is not parsable as an Int32" }]
+        | ValidationError e -> e |> should equal [{ Message = "'twele' is not parsable as an Int32" }]
 
 [<Test>]
 let ``String to decimal should pass parsing`` () =
-    let parasableRestraint = validString { parsable_decimal }
+    let parsableRestraint = validString { parsable_decimal }
     
     "12.0001"
-    |> parasableRestraint
+    |> parsableRestraint
     |> function
         | Ok -> Assert.Pass()
         | ValidationError e -> failwith "Should have passed validation"
 
 [<Test>]
 let ``String to decimal should fail parsing`` () =
-    let parasableRestraint = validString { parsable_decimal }
+    let parsableRestraint = validString { parsable_decimal }
 
     "twelve"
-    |> parasableRestraint
+    |> parsableRestraint
     |> function
         | Ok -> failwith "Should have failed validation"
         | ValidationError e -> e |> should equal [{ Message = "'twelve' is not parsable as a decimal" }]
@@ -116,3 +119,23 @@ let ``Invalid Email`` () =
     |> function
         | Ok -> failwith "Validation should have failed"
         | ValidationError e -> e |> should equal [{ Message = "'@gmail.com' is not a valid email" }]
+
+[<Test>]
+let ``Equality validation`` () =
+    let mustEqualTralfamadore = validString { equal "Tralfamadore" }
+
+    "Tralfamadore"
+    |> mustEqualTralfamadore
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError e -> failwith "Should have passed validation"
+
+[<Test>]
+let ``Equality test should fail`` () =
+    let mustEqual = validString { equal "Trout" }
+
+    "Kilgore"
+    |> mustEqual
+    |> function
+        | Ok -> failwith "Should have failed validation"
+        | ValidationError e -> e |> should equal [{ Message = "Must equal 'Trout'" }]
