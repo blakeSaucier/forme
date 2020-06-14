@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Common.fs" />
-    <Compile Include="StringBuilder\Email.fs" />
+    <Compile Include="StringBuilder\StringHelper.fs" />
     <Compile Include="StringBuilder\StringRestraintBuilder.fs" />
     <Compile Include="DecimalRestraintBuilder.fs" />
     <Compile Include="IntRestraintBuilder.fs" />

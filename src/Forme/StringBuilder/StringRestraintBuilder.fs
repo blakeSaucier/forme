@@ -2,7 +2,7 @@
 
 open System
 open Common
-open Email
+open StringHelper
 
 [<AutoOpen>]
 module StringValidationBuilder =
@@ -54,35 +54,28 @@ module StringValidationBuilder =
         /// The string must have the specified length
         [<CustomOperation "hasLengthOf">]
         member __.HasLength(validators: StringRestraints, length) =
-            let hasLength length str = 
-                str
-                |> String.length = length
-                |> function
-                    | true -> Ok 
-                    | false -> ValidationError [{ Message = sprintf "must have length %i" length }]
+            let hasLength length str =
+                match str with
+                | HasLength length _ -> Ok
+                | _ -> ValidationError [{ Message = sprintf "must have length %i" length }]
             hasLength length :: validators
 
         /// The string must start with the supplied substring
         [<CustomOperation "startsWith">]
         member __.StartsWith(validators: StringRestraints, str) =
-            let mustStartWith str (s:string) =
-                str
-                |> s.StartsWith
-                |> function 
-                    | true -> Ok
-                    | false -> ValidationError [{ Message = sprintf "must start with '%s'" str }]
+            let mustStartWith (str: string) (s:string) =
+                match s with
+                | StartsWith str _ -> Ok
+                | _ -> ValidationError [{ Message = sprintf "must start with '%s'" str }]
             (mustStartWith str) :: validators
 
         /// The string must be parsable using Int32.TryParse
         [<CustomOperation "parsable_int">]
         member __.ParsableInt(validators: StringRestraints) =
             let mustBeParsableInt str =
-                str
-                |> Int32.TryParse
-                |> fun (res, _) -> res
-                |> function
-                    | true -> Ok
-                    | false -> ValidationError [{ Message = sprintf "'%s' is not parsable as an Int32" str }]
+                match str with
+                | Int _ -> Ok
+                | _ -> ValidationError [{ Message = sprintf "'%s' is not parsable as an Int32" str }]
             mustBeParsableInt :: validators
 
         [<CustomOperation "equal">]
@@ -105,7 +98,7 @@ module StringValidationBuilder =
         member __.Email (validators: StringRestraints) =
             let isEmail str =
                 match str with
-                | Email a -> Ok
+                | Email _ -> Ok
                 | _ -> ValidationError [{ Message = sprintf "'%s' is not a valid email" str }]
             isEmail :: validators
 
