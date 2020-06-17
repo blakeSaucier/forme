@@ -121,3 +121,8 @@ module StringValidationBuilder =
             customRestraint :: validators
 
     let validString = StringRestraintBuilder()
+
+module ValidString =
+    let equals s = validString { equal s }
+    let notShorterThan len = validString { notShorterThan len }
+    let notEmpty = validString { notEmpty }

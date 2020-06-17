@@ -46,3 +46,6 @@ module DecimalRestraintBuilder =
             (equals mustEqual) :: validations
 
     let validDecimal = DecimalRestraintBuilder()
+
+module validDecimal =
+    let notZeroDecimal = validDecimal { notZero }

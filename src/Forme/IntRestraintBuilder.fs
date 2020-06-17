@@ -41,3 +41,7 @@ module IntRestraintBuilder =
             (equals mustEqual) :: validators
 
     let validInt = IntRestraintBuilder()
+
+module ValidInt =
+    let equals i = validInt { equal i }
+    let notZero = validInt { notZero }

@@ -9,6 +9,17 @@ type Person =
       LastName: string; 
       Age: int }
 
+type Address =
+    { StreetAddress: string
+      City: string
+      PostalCode: string
+      Province: string }
+
+type Contact =
+    { Profile: Person
+      Address: Address
+      IsActive: bool }
+
 let validName = validString {
     notEmpty
     notLongerThan 100
@@ -58,3 +69,47 @@ let ``Model validation error message test `` () =
     |> function
         | Ok -> Assert.Fail()
         | ValidationError e -> e |> should equal expectedError
+
+[<Test>]
+let ``Nested models should evaluate object graph`` () =
+    
+    let blake =
+        { FirstName = "Blake"
+          LastName = "S"
+          Age = 30 }
+
+    let address =
+        { StreetAddress = "1234 Fake St."
+          City = "Vancouver"
+          Province = "BC"
+          PostalCode = "V1A2B3" }
+
+    let contact =
+        { Profile = blake
+          Address = address
+          IsActive = true }
+
+    let validProfile = valid<Person> {
+        rule (fun p -> p.LastName)  (notShorterThan 2)
+    }
+
+    let validPostalCode = validString {
+        startsWith "V"
+        hasLengthOf 6
+    }
+
+    let validAddress = valid<Address> {
+        rule (fun a -> a.StreetAddress) notEmpty
+        rule (fun a -> a.PostalCode) validPostalCode
+    }
+
+    let validContact = valid<Contact> {
+        rule (fun c -> c.Profile) validProfile
+        rule (fun c -> c.Address) validAddress
+    }
+
+    contact
+    |> validContact
+    |> function
+        | Ok -> failwith "Should have failed validation"
+        | ValidationError e -> e |> should equal [{ Message = "'Profile' 'LastName' must be at least as long as 2"}]
