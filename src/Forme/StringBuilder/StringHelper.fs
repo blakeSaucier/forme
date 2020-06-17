@@ -21,7 +21,7 @@ module internal StringHelper =
 
     let (|HasLength|_|) (l:int) str =
         if String.length str = l
-        then Some l
+            then Some l
         else None
     
     let (|Email|_|) emailInput =
