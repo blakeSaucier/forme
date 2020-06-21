@@ -139,3 +139,30 @@ let ``Equality test should fail`` () =
     |> function
         | Ok -> failwith "Should have failed validation"
         | ValidationError e -> e |> should equal [{ Message = "Must equal 'Trout'" }]
+
+[<Test>]
+let ``Regex test should pass`` () =
+    let aReasonableDateFormat = validString {
+        regex "(\d{1,4})-(\d{1,2})-(\d{1,2})"
+    }
+    
+    // convenience function
+    // let aReasonableDateFormat = ValidString.regex "(\d{1,4})-(\d{1,2})-(\d{1,2})"
+
+    "1989-12-03"
+    |> aReasonableDateFormat
+    |> function
+        | Ok -> Assert.Pass()
+        | ValidationError _ -> failwith "Should have passed validation"
+
+[<Test>]
+let ``Regex should fail and provide error message`` () =
+    let unreasonableDateFormat = validString {
+        regex "(\d{1,2})/(\d{1,2})/(\d{1,2})"
+    }
+
+    "1990-01-01"
+    |> unreasonableDateFormat
+    |> function
+        | Ok -> failwith "Should have failed validation"
+        | ValidationError e -> (List.head e) |> should equal { Message = "'1990-01-01' does not match the regular expression: '(\d{1,2})/(\d{1,2})/(\d{1,2})' "}

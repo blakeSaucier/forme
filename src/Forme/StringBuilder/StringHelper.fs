@@ -1,9 +1,10 @@
 ﻿namespace Forme
 
 module internal StringHelper =
+    open System.Text.RegularExpressions
     open System.Net.Mail
     open System
-
+    
     let (|Int|_|) str =
         match Int32.TryParse str with
         | (true, i) -> Some i
@@ -29,3 +30,8 @@ module internal StringHelper =
             Some (MailAddress emailInput)
         with
             | _ -> None
+
+    let (|Regex|_|) (pattern:string) (str:string) =
+        let res = Regex.Match(str, pattern)
+        if res.Success then Some(List.tail [for x in res.Groups-> x.Value])
+        else None

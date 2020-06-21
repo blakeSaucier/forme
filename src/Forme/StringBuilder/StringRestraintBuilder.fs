@@ -111,6 +111,14 @@ module StringValidationBuilder =
                 | _ -> ValidationError [{ Message = sprintf "'%s' is not a valid email" str }]
             isEmail :: validators
 
+        [<CustomOperation "regex">]
+        member __.Regex (validators: StringRestraints, regex: string) =
+            let regexValidator str =
+                match str with
+                | Regex regex _ -> Ok
+                | _ -> ValidationError [{ Message = sprintf "'%s' does not match the regular expression: '%s' " str regex }]
+            regexValidator :: validators
+
         /// Describe a custom string validation
         [<CustomOperation "must">]
         member __.Must(validators: StringRestraints, (restraint: string -> bool), message) =
@@ -126,3 +134,5 @@ module ValidString =
     let equals s = validString { equal s }
     let notShorterThan len = validString { notShorterThan len }
     let notEmpty = validString { notEmpty }
+    let email = validString { email }
+    let regex pattern = validString { regex pattern }
