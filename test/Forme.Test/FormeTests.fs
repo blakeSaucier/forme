@@ -90,7 +90,7 @@ let ``Nested models should evaluate object graph`` () =
           IsActive = true }
 
     let validProfile = valid<Person> {
-        rule (fun p -> p.LastName)  (notShorterThan 2)
+        rule (fun p -> p.LastName)  (ValidString.notShorterThan 2)
     }
 
     let validPostalCode = validString {
@@ -99,7 +99,7 @@ let ``Nested models should evaluate object graph`` () =
     }
 
     let validAddress = valid<Address> {
-        rule (fun a -> a.StreetAddress) notEmpty
+        rule (fun a -> a.StreetAddress) ValidString.notEmpty
         rule (fun a -> a.PostalCode) validPostalCode
     }
 
