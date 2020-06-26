@@ -1,7 +1,6 @@
 ﻿module Forme.Test.``Sequence Validation Builder``
 
 open NUnit.Framework
-open FsUnit
 open Forme
 
 [<Test>]
