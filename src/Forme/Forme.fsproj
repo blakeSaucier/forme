@@ -8,6 +8,7 @@
     <Compile Include="Common.fs" />
     <Compile Include="StringBuilder\StringHelper.fs" />
     <Compile Include="StringBuilder\StringRestraintBuilder.fs" />
+    <Compile Include="SequenceRestraintBuilder.fs" />
     <Compile Include="DecimalRestraintBuilder.fs" />
     <Compile Include="IntRestraintBuilder.fs" />
     <Compile Include="Forme.fs" />
