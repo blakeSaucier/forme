@@ -1,168 +1,122 @@
-﻿module Forme.Test.``String Validation Builder``
+﻿module StringValidationTests
 
-open NUnit.Framework
 open Forme
-open FsUnit
+open Expecto
 
-[<Test>]
-let ``Basic string restraint`` () =
-    let nameRestraint = validString {
-        notEmpty
-        notLongerThan 50
-    }
-
-    match "James" |> nameRestraint with
-    | Ok -> Assert.Pass()
-    | ValidationError e -> failwith "Should have passed validation"
-
-[<Test>]
-let ``Basic string validation failure messages`` () =
-    ""
-    |> validString { notEmpty }
-    |> function
-        | Ok -> failwith "Validation should have failed"
-        | ValidationError e -> e |> should equal [{ Message = "must not be empty" }]
-
-[<Test>]
-let ``Length constraint tests`` () =
-    let lengthConstraint = validString {
-        notLongerThan 50
-        notShorterThan 10
-    }
-
-    "Hello"
-    |> lengthConstraint
-    |> function
-        | Ok -> failwith "Should have failed validation"
-        | ValidationError e -> Assert.Pass()
-
-    "April is the cruelest month"
-    |> lengthConstraint
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError e -> failwith "Validaiton should have passed"
-
-    "Howdy"
-    |> validString { hasLengthOf 5 }
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError e -> failwith "Validation should have passed"
-
-[<Test>]
-let ``String to Int parsing should pass`` () =
-    let parsable = validString { parsable_int }
-    
-    "12"
-    |> parsable
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError _ -> failwith "Validation should have passed"
-
-let ``String to Int parsing should fail`` () =
-    let parsableInt = validString { parsable_int }
-
-    "twelve"
-    |> parsableInt
-    |> function
-        | Ok -> failwith "Should have failed"
-        | ValidationError e -> e |> should equal [{ Message = "'twele' is not parsable as an Int32" }]
-
-[<Test>]
-let ``String to decimal should pass parsing`` () =
-    let parsableRestraint = validString { parsable_decimal }
-    
-    "12.0001"
-    |> parsableRestraint
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError e -> failwith "Should have passed validation"
-
-[<Test>]
-let ``String to decimal should fail parsing`` () =
-    let parsableRestraint = validString { parsable_decimal }
-
-    "twelve"
-    |> parsableRestraint
-    |> function
-        | Ok -> failwith "Should have failed validation"
-        | ValidationError e -> e |> should equal [{ Message = "'twelve' is not parsable as a decimal" }]
-
-[<Test>]
-let ``Multiple error messages should be joined`` () =
-    let bcPostalCode = validString {
-        notLongerThan 6
-        notShorterThan 6
-        notEmpty
-        startsWith "V"
-    }
-
-    let expectedError = [{ Message = "must start with 'V'"}; { Message = "must not be longer than 6" }]
-
-    "Not a postal code"
-    |> bcPostalCode
-    |> function
-        | Ok -> failwith "Validation should have failed"
-        | ValidationError e -> e |> should equal expectedError
-
-[<Test>]
-let ``Valid email`` () =
-    "a@gmail.com"
-    |> validString { email }
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError e -> failwith "Should have passed validation"
-
-[<Test>]
-let ``Invalid Email`` () =
-    "@gmail.com"
-    |> validString { email }
-    |> function
-        | Ok -> failwith "Validation should have failed"
-        | ValidationError e -> e |> should equal [{ Message = "'@gmail.com' is not a valid email" }]
-
-[<Test>]
-let ``Equality validation`` () =
-    let mustEqualTralfamadore = validString { equal "Tralfamadore" }
-
-    "Tralfamadore"
-    |> mustEqualTralfamadore
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError e -> failwith "Should have passed validation"
-
-[<Test>]
-let ``Equality test should fail`` () =
-    let mustEqual = validString { equal "Trout" }
-
-    "Kilgore"
-    |> mustEqual
-    |> function
-        | Ok -> failwith "Should have failed validation"
-        | ValidationError e -> e |> should equal [{ Message = "Must equal 'Trout'" }]
-
-[<Test>]
-let ``Regex test should pass`` () =
-    let aReasonableDateFormat = validString {
-        regex "(\d{1,4})-(\d{1,2})-(\d{1,2})"
-    }
-    
-    // convenience function
-    // let aReasonableDateFormat = ValidString.regex "(\d{1,4})-(\d{1,2})-(\d{1,2})"
-
-    "1989-12-03"
-    |> aReasonableDateFormat
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError _ -> failwith "Should have passed validation"
-
-[<Test>]
-let ``Regex should fail and provide error message`` () =
-    let unreasonableDateFormat = validString {
-        regex "(\d{1,2})/(\d{1,2})/(\d{1,2})"
-    }
-
-    "1990-01-01"
-    |> unreasonableDateFormat
-    |> function
-        | Ok -> failwith "Should have failed validation"
-        | ValidationError e -> (List.head e) |> should equal { Message = "'1990-01-01' does not match the regular expression: '(\d{1,2})/(\d{1,2})/(\d{1,2})' "}
+[<Tests>]
+let stringTests =
+    testList "String validation tests" [
+        testList "Basic string validation" [
+            test "Basic string validation" {
+                let nameRestraint = validString {
+                    notEmpty
+                    notLongerThan 50
+                }
+                
+                let res = nameRestraint "James"
+                Expect.equal res Ok "Should pass validation"
+            }
+            
+            test "Empty string fails validation" {
+                let nameRestraint = validString {
+                    notEmpty
+                    notLongerThan 50
+                }
+                
+                let res = nameRestraint ""
+                Expect.equal res (ValidationError [{ Message = "must not be empty" }]) "Should fail validation"
+            }
+        ]
+        testList "String length constraints" [
+            let lengthConstraint = validString {
+                notLongerThan 50
+                notShorterThan 10
+            }
+            
+            test "String length validation should fail" {
+                let res = lengthConstraint "Hello"
+                Expect.equal res (ValidationError [{ Message = "must be at least as long as 10" }]) "Should fail validation"
+            }
+            
+            test "String length validation should pass" {
+                let res = lengthConstraint "April is the cruelest month"
+                Expect.equal res Ok "Should pass validation"
+            }
+        ]
+        testList "String parsing" [
+            let parsable = validString { parsable_int }
+            test "String to int parsing should work" {
+                let res = parsable "12"
+                Expect.equal res Ok "Should parse successfully"
+            }
+            
+            test "String to int parsing should fail for non number" {
+                let res = parsable "twelve"
+                Expect.equal res (ValidationError [{ Message = "'twelve' is not parsable as an Int32" }]) "Should fail validation"
+            }
+        ]        
+        testList "Decimal parsing" [
+            let parsableDecimal = validString { parsable_decimal }
+            test "String to decimal parsing should work for valid decimal" {
+                let res = parsableDecimal "12.0001"
+                Expect.equal res Ok "Should parse successfully"
+            }
+            
+            test "String to decimal parsing should fail for invalid decimal" {
+                let res = parsableDecimal "twelvepointzero1"
+                Expect.equal res (ValidationError [{ Message = "'twelvepointzero1' is not parsable as a decimal" }]) "Should fail validation"
+            }
+        ]
+        testList "Multiple error messages" [
+            test "Multiple validation errors" {
+                let bcPostalCode = validString {
+                    notLongerThan 6
+                    notShorterThan 6
+                    notEmpty
+                    startsWith "V"
+                }
+                let res = bcPostalCode "MVVVMSDTDX"
+                Expect.equal res (ValidationError [
+                    { Message = "must start with 'V'" }
+                    { Message = "must not be longer than 6" } ]) "Should fail validation with several messages"
+            }
+        ]
+        testList "Email tests" [
+            let shouldBeEmail = validString { email }
+            test "Should recognize a valid email" {
+                let res = shouldBeEmail "a@gmail.com"
+                Expect.equal res Ok "Should pass validation"
+            }
+            
+            test "Should recognize an invalid email" {
+                let res = shouldBeEmail "@test.com"
+                Expect.equal res (ValidationError [{ Message = "'@test.com' is not a valid email" }]) "Should fail validation"
+            }
+        ]
+        testList "String comparision tests" [
+            let shouldBeAlien = validString { equal "Tralfamadore" }
+            test "Should match equal strings" {
+                let res = shouldBeAlien "Tralfamadore"
+                Expect.equal res Ok "Should pass validation"
+            }
+            
+            test "Should recognize unequal strings" {
+                let res = shouldBeAlien "Kilgore"
+                Expect.equal res (ValidationError [{ Message = "Must equal 'Tralfamadore'" }]) "Should fail validation"
+            }
+        ]
+        testList "Regex validation" [
+            let aReasonableDateFormat = validString {
+                regex "(\d{4})-(\d{1,2})-(\d{1,2})"
+            }
+            test "Should successfully match regex" {
+                let res = aReasonableDateFormat "1989-12-03"
+                Expect.equal res Ok "Should pass validation"                
+            }
+            
+            test "Should recognize a string which doesn't match the regex pattern" {
+                let res = aReasonableDateFormat "12-03-1989"
+                Expect.equal res (ValidationError [{ Message = "'12-03-1989' does not match the regular expression: '(\d{4})-(\d{1,2})-(\d{1,2})' " }]) "Should fail validation"
+            }
+        ]
+    ]

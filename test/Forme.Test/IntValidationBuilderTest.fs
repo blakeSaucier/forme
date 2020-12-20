@@ -1,17 +1,18 @@
-﻿module Forme.Test.IntValidationBuilderTest
+﻿module IntValidationTest
 
-open NUnit.Framework
 open Forme
+open Expecto
 
-[<Test>]
-let ``Basic Int validation `` () =
-    let ageRestraint = validInt {
-        atLeast 19
-        atMost 90
-    }
-
-    21 
-    |> ageRestraint
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError e -> failwith "Should have passed validation"
+[<Tests>]
+let intTests =
+    testList "Int Validation Tests" [
+        test "Basic int validation" {
+            let ageRestraint = validInt {
+                atLeast 19
+                atMost 90
+            }
+            
+            let res = ageRestraint 21
+            Expect.equal res Ok "Should have passed validation"
+        }
+    ]

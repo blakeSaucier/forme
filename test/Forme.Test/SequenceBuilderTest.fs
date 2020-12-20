@@ -1,29 +1,26 @@
-﻿module Forme.Test.``Sequence Validation Builder``
+﻿module SequenceValidationTests
 
-open NUnit.Framework
 open Forme
+open Expecto
 
-[<Test>]
-let ``Basic sequence validation should pass`` () =
-    let nonEmptyStrings = validSeq<string> {
-        eachElementMust ValidString.notEmpty
-    }
-
-    ["once"; "like"; "me"]
-    |> nonEmptyStrings
-    |> function
-        | Ok -> Assert.Pass()
-        | ValidationError _ -> failwith "Should have passed"
-
-[<Test>]
-let ``Basic sequence validation should not pass`` () =
-    let nonEmptyStrings = validSeq<string> {
-        eachElementMust ValidString.notEmpty
-    }
-
-    ["once"; ""; "again"]
-    |> nonEmptyStrings
-    |> function
-        | Ok -> Assert.Fail "Should have failed"
-        | ValidationError _ -> Assert.Pass()
+[<Tests>]
+let sequenceTests =
+    testList "sequence validation builder tests" [
+        test "Basic sequence validation" {
+            let nonEmptyStrings = validSeq<string> {
+                eachElementMust ValidString.notEmpty
+            }
+            
+            let res = nonEmptyStrings [ "get"; "up"; "and"; "go" ]
+            Expect.equal res Ok "Should pass basic validation"
+        }
+        
+        test "Basic sequence validation with failure" {
+            let nonEmptyStrings = validSeq<string> {
+                eachElementMust ValidString.notEmpty
+            }
+            let res = nonEmptyStrings [ "it"; "would"; "all"; ""; "work"; "out" ]
+            Expect.equal res (ValidationError [{ Message = "must not be empty" }]) "Should have failed validation"
+        }
+    ]
 
