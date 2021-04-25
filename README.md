@@ -5,6 +5,7 @@ Readable model validations for F#.
 Example:
 
 ```fsharp
+open Forme
 
 type Person = 
     { FirstName: string

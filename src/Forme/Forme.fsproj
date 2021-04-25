@@ -10,6 +10,7 @@
     <Summary>Readable model validations for F#</Summary>
     <Description>Readable model validations for F#</Description>
     <PackageProjectUrl>https://github.com/blakeSaucier/forme</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/blakeSaucier/forme/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
