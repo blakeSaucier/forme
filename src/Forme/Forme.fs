@@ -34,7 +34,7 @@ module Validator =
     let private propertyName (getter:Expr<'T -> 'U>) =
         let rec matchPropName expr =
             match expr with
-            | Patterns.PropertyGet(_, p, _) -> p.Name
+            | PropertyGet(_, p, _) -> p.Name
             | Lambda(_, ex) -> matchPropName ex
             | _ -> failwith "Unsupported Expression"
         matchPropName getter
@@ -50,7 +50,9 @@ module Validator =
     let private runValidation validations t =
         let boxed = box t
         validations
-        |> List.map (fun r -> { Result = (r.Restraint boxed); FieldName = r.FieldName })
+        |> List.map (fun r ->
+            { Result = (r.Restraint boxed)
+              FieldName = r.FieldName })
         |> getFailures
         |> function
             | [] -> Ok

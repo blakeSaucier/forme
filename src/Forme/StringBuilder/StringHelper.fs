@@ -7,12 +7,12 @@ module internal StringHelper =
     
     let (|Int|_|) str =
         match Int32.TryParse str with
-        | (true, i) -> Some i
+        | true, i -> Some i
         | _ -> None
 
     let (|Decimal|_|) str =
         match Decimal.TryParse str with
-        | (true, d) -> Some d
+        | true, d -> Some d
         | _ -> None
 
     let (|StartsWith|_|) (startsWith: string) (str: string) =
