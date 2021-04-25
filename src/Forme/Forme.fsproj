@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    
+    <PackageId>Forme</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>James Saucier</Authors>
+    <PackageTags>F#, FSharp, Result, Validation, Domain, DSL, </PackageTags>
+    <Summary>Readable model validations for F#</Summary>
+    <Description>Readable model validations for F#</Description>
   </PropertyGroup>
 
   <ItemGroup>
