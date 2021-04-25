@@ -1,9 +1,10 @@
 ﻿namespace Forme
+open FsToolkit.ErrorHandling
 
 [<AutoOpen>]
 module Common =
     type Error = { Message: string }
-
+    
     type ValidationResult =
         | ValidationError of Error list
         | Ok
@@ -26,5 +27,3 @@ module Common =
                 errors
                 |> List.concat
                 |> ValidationError
-
-    

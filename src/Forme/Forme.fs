@@ -42,7 +42,7 @@ module Validator =
     let private propGetter (getter:Expr<'T -> 'U>) =
         let rec matchPropGet expr =
             match expr with
-            | Patterns.PropertyGet(_, p, _) -> fun (t:'T) -> p.GetValue(t) :?> 'U
+            | PropertyGet(_, p, _) -> fun (t:'T) -> p.GetValue(t) :?> 'U
             | Lambda(_, ex) -> matchPropGet ex
             | _ -> failwith "Unsupported Expression"
         matchPropGet getter
@@ -59,11 +59,11 @@ module Validator =
             | errors -> ValidationError errors
 
     type ValidatorBuilder<'T>() =
-        member __.Yield _ : ModelValidator = List.Empty
-        member __.Run modelValidator t = runValidation modelValidator t
+        member _.Yield _ : ModelValidator = List.Empty
+        member _.Run modelValidator t = runValidation modelValidator t
 
         [<CustomOperation "rule">]
-        member __.Restrain   (modelValidator: ModelValidator,
+        member _.Restrain   (modelValidator: ModelValidator,
                             ([<ReflectedDefinition>] getter: PropGet<'T, 'U>),
                             (validation: 'U -> ValidationResult)) =
             let propName = propertyName getter

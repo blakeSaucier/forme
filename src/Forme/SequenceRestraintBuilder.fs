@@ -10,8 +10,8 @@ module SequenceRestraintBuilder =
     type SeqeunceRestraints<'T> = SequenceRestraint<'T> list
 
     type SequenceRestraintBuilder<'T>() =
-        member __.Yield _ : SeqeunceRestraints<'T> = List.empty
-        member __.Run validations sx =
+        member _.Yield _ : SeqeunceRestraints<'T> = List.empty
+        member _.Run validations sx =
             let applyValidations (validations: SeqeunceRestraints<'T>) (s:'T) =
                 validations
                 |> List.map (fun v -> v s)
@@ -23,7 +23,7 @@ module SequenceRestraintBuilder =
             |> collectErrors
             
         [<CustomOperation "eachElementMust">]
-        member __.EachItemMust<'T> (validations: SeqeunceRestraints<'T>, restraint) =
+        member _.EachItemMust<'T> (validations: SeqeunceRestraints<'T>, restraint) =
             restraint :: validations
 
     let validSeq<'T> = SequenceRestraintBuilder<'T>()

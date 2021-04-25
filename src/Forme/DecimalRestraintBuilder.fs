@@ -7,14 +7,14 @@ module DecimalRestraintBuilder =
     type DecimalRestraints = DecimalRestraint list
 
     type DecimalRestraintBuilder () =
-        member __.Yield _ : DecimalRestraints = List.empty
-        member __.Run validations (d: decimal) =
+        member _.Yield _ : DecimalRestraints = List.empty
+        member _.Run validations (d: decimal) =
             validations
             |> List.map (fun v -> v d)
             |> collectErrors
 
         [<CustomOperation "atLeast">]
-        member __.AtLeast (validations, minimum) =
+        member _.AtLeast (validations, minimum) =
             let atLeast min d =
                 match d >= min with
                 | true -> Ok
@@ -22,7 +22,7 @@ module DecimalRestraintBuilder =
             (atLeast minimum) :: validations
 
         [<CustomOperation "atMost">]
-        member __.AtMost (validations: DecimalRestraints, maximum) =
+        member _.AtMost (validations: DecimalRestraints, maximum) =
             let atMost max d =
                 match max <= d with
                 | true -> Ok
@@ -30,7 +30,7 @@ module DecimalRestraintBuilder =
             (atMost maximum) :: validations
 
         [<CustomOperation "notZero">]
-        member __.NotZero (validations) =
+        member _.NotZero (validations) =
             let notZero d =
                 match d = 0M with
                 | true -> ValidationError [{ Message = "must not equal zero" }]
@@ -38,7 +38,7 @@ module DecimalRestraintBuilder =
             notZero :: validations
 
         [<CustomOperation "equal">]
-        member __.Equal (validations: DecimalRestraints, mustEqual) =
+        member _.Equal (validations: DecimalRestraints, mustEqual) =
             let equals mustBe d =
                 match mustBe = d with
                 | true -> Ok
