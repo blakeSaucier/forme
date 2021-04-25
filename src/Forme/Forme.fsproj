@@ -9,6 +9,7 @@
     <PackageTags>F#, FSharp, Result, Validation, Domain, DSL, </PackageTags>
     <Summary>Readable model validations for F#</Summary>
     <Description>Readable model validations for F#</Description>
+    <PackageProjectUrl>https://github.com/blakeSaucier/forme</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,10 +20,6 @@
     <Compile Include="DecimalRestraintBuilder.fs" />
     <Compile Include="IntRestraintBuilder.fs" />
     <Compile Include="Forme.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FsToolkit.ErrorHandling" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 ﻿namespace Forme
-open FsToolkit.ErrorHandling
 
 [<AutoOpen>]
 module Common =
