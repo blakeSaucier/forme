@@ -14,4 +14,8 @@
     <Compile Include="Forme.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FsToolkit.ErrorHandling" Version="2.2.0" />
+  </ItemGroup>
+
 </Project>
